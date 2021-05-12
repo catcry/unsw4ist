@@ -66,46 +66,49 @@ from sklearn.cluster import KMeans
 
 
 
-from iot20_prep_func import iot20_prep
-
-#=================
-num_classes =  1 #||
-#=================
-
-faddr = r'F:\Git\unsw4ist\IoT20\Network\Train_Test_Network.csv'
-seperator = ','
+from unsw4ist.preprocess.iot20_prep_func import iot20_prep
 
 
-[Xtrain,Ytrain,Xvalid,Yvalid,Xtest,Ytest] = \
-            iot20_prep (faddr = faddr, seperator = seperator,\
-                       vald = 1, vald_percentage = 10,\
-                       test = 1, test_percentage = 10,\
-                       binary_class = True)
-            
-# Definin appropriate array shapes for Keras Neural Nets
-Xtrain = Xtrain.reshape((len(Xtrain),1,Xtrain.shape[1]))
-Xtrain_orig = np.copy(Xtrain)
-Xvalid = Xvalid.reshape((len(Xvalid),1,Xvalid.shape[1]))
-Xvalid_orig = np.copy(Xvalid)
-Xtest  = Xtest.reshape((len(Xtest),1,Xtest.shape[1]))
-Xtest_orig = np.copy(Xtest)
 
-Ytrain_1hot = np.zeros([len(Ytrain),num_classes])
-Yvalid_1hot = np.zeros([len(Yvalid),num_classes])
-Ytest_1hot = np.zeros([len(Ytest),num_classes])
+def iot20_sets(faddr, num_classes = 1, seperator = ',')
 
-if num_classes != 1:
-    for i in range(len(Ytrain)):
-            Ytrain_1hot[i,Ytrain[i]] = 1
+    #====================#
+    num_classes =  1     #
+    #====================#
     
-    for i in range(len(Yvalid)):
-            Yvalid_1hot[i,Yvalid[i]] = 1
+    
+    [Xtrain,Ytrain,Xvalid,Yvalid,Xtest,Ytest] = \
+                iot20_prep (faddr = faddr, seperator = seperator,\
+                           vald = 1, vald_percentage = 10,\
+                           test = 1, test_percentage = 10,\
+                           binary_class = True)
+                
+    # Definin appropriate array shapes for Keras Neural Nets
+    Xtrain = Xtrain.reshape((len(Xtrain),1,Xtrain.shape[1]))
+    Xtrain_orig = np.copy(Xtrain)
+    Xvalid = Xvalid.reshape((len(Xvalid),1,Xvalid.shape[1]))
+    Xvalid_orig = np.copy(Xvalid)
+    Xtest  = Xtest.reshape((len(Xtest),1,Xtest.shape[1]))
+    Xtest_orig = np.copy(Xtest)
+    
+    Ytrain_1hot = np.zeros([len(Ytrain),num_classes])
+    Yvalid_1hot = np.zeros([len(Yvalid),num_classes])
+    Ytest_1hot = np.zeros([len(Ytest),num_classes])
+    
+    if num_classes != 1:
+        for i in range(len(Ytrain)):
+                Ytrain_1hot[i,Ytrain[i]] = 1
         
-    for i in range(len(Ytest)):
-            Ytest_1hot[i,Ytest[i]] = 1  
+        for i in range(len(Yvalid)):
+                Yvalid_1hot[i,Yvalid[i]] = 1
+            
+        for i in range(len(Ytest)):
+                Ytest_1hot[i,Ytest[i]] = 1  
+        
+     
+    else:
+          Ytrain_1hot = Ytrain
+          Yvalid_1hot = Yvalid
+          Ytest_1hot = Ytest
     
- 
-else:
-      Ytrain_1hot = Ytrain
-      Yvalid_1hot = Yvalid
-      Ytest_1hot = Ytest
+    return Xtrain,Ytrain_1hot,Xvalid,Yvalid_1hot,Xtest,Ytest_1hot
